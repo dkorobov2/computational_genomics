@@ -1,0 +1,59 @@
+#define NUM_NUCL 144
+
+__kernel void createMap(__global uint *read_seq, const int k, __global uint *table, const int seq_len) {
+	int gid = get_global_id(0);
+	int tnum = get_local_id(0);
+	int wgNum = get_group_id(0); 
+	int numItems = get_local_size(0); //512
+		if (k <= 0 || k > 16) {
+		return;
+	}
+	int mask;
+	uint temp, map_elem;
+	int leftindex, rightindex, leftmod, rightmod, leftbound, rightbound;
+	int num_reads = seq_len / 36;
+	int ind = wgNum*(seq_len/NUM_NUCL)*(128 - k + 1) + tnum*16*(128 - k + 1);
+	for (int j = wgNum*(seq_len/NUM_NUCL) + tnum*16; j < wgNum*(seq_len/NUM_NUCL) + tnum*16 + num_reads/(numItems*4); j++) { 
+		for (int i = NUM_NUCL; i >(int)((NUM_NUCL)-(read_seq[j*9] - k)); i--) { 
+			rightbound = i + j * NUM_NUCL;
+			leftbound = i - k + j * NUM_NUCL;
+			leftindex = (leftbound - 1) / 16;
+			rightindex = (rightbound - 1) / 16;
+			leftmod = (leftbound - 1) % 16;
+			rightmod = (rightbound - 1) % 16;
+			map_elem = 0;
+			for (int a = leftindex; a <= rightindex; a++) {
+				if (a == leftindex && a == rightindex) {
+					temp = read_seq[a] >> (32 - (rightmod + 1) * 2);
+					mask = (int) (0x1 << (k * 2)) - 1;
+					//mask = (int)pow(2, k * 2) - 1;
+					map_elem = temp & mask;
+				}
+				else if (a == leftindex) {
+					if (!leftmod) {
+						mask = 0xffffffff;
+					}
+					else {
+						mask = (int) (0x1 << ((16 - leftmod) * 2)) - 1;
+						//mask = (int)pow(2, ((16 - leftmod) * 2)) - 1;
+					}
+					temp = read_seq[a] & mask;
+					temp = temp << (rightmod * 2);
+					map_elem = temp;
+				}
+				else if (a == rightindex) { 
+					mask = (int) (0x1 << (rightmod*2)) - 1;
+					//mask = (int)pow(2, (rightmod * 2)) - 1;
+					temp = (read_seq[a] >> (rightmod * 2)) & mask;
+					map_elem += temp;
+				}
+				else {
+					temp = read_seq[a];
+				}
+			}
+			//cout << "map_elem " << hex << map_elem << endl;
+			table[ind] = map_elem;
+			ind++;
+		}
+	}
+}

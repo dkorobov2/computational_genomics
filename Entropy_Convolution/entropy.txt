@@ -1,0 +1,32 @@
+typedef struct ncount_t {
+	//uint num_a;
+	//uint num_c;
+	//uint num_g;
+	//uint num_t;
+	int4 v_ncount;
+} ncount_t;
+
+__kernel void calculateEntropy(__global float * output, __global ncount_t * counts, __const int elements_per_thread)
+{
+	int tnum = get_local_id(0);
+	int wgNum = get_group_id(0); 
+	int groupItems = get_local_size(0); //512, max on my computer
+
+	int num_nucl_per_group = elements_per_thread * groupItems;
+	int sum, index, shift, nuc;
+	float pa, pc, pt, pg, logpa, logpc, logpt, logpg;
+	for (int i = wgNum*(num_nucl_per_group) + tnum*elements_per_thread; i < wgNum*(num_nucl_per_group) + (tnum + 1)*elements_per_thread; i++) {
+		//sum = counts[i].num_a + counts[i].num_c + counts[i].num_g + counts[i].num_t;
+		sum = counts[i].v_ncount.x + counts[i].v_ncount.y + counts[i].v_ncount.z + counts[i].v_ncount.w;
+		pa = sum > 0 ? (float)counts[i].v_ncount.x / sum : 0;
+		pc = sum > 0 ? (float)counts[i].v_ncount.y / sum : 0;
+		pg = sum > 0 ? (float)counts[i].v_ncount.z / sum : 0;
+		pt = sum > 0 ? (float)counts[i].v_ncount.w / sum : 0;
+		logpa = pa > 0 ? log2(pa) : 0;
+		logpc = pc > 0 ? log2(pc) : 0;
+		logpg = pg > 0 ? log2(pg) : 0;
+		logpt = pt > 0 ? log2(pt) : 0;
+
+		output[i] = -sum * pa * logpa - sum * pc * logpc - sum * pg * logpg - sum * pt * logpt;
+	} 
+}

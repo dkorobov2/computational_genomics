@@ -1,0 +1,40 @@
+typedef struct kmer_t {
+	uint kmer;
+	uint k_num;
+} kmer_t;
+
+__kernel void reduceFrequency(__global intptr_t *tables_in, __global kmer_t *table_out, const int size, __global uint *out_ind, __global uint *flag) {
+	int gid = get_global_id(0);
+	int tnum = get_local_id(0);
+	int wgNum = get_group_id(0); 
+	int numItems = get_local_size(0);
+
+	int set_flag = 0;
+	int in_ind = 0;
+
+/*	for (int i = 0; i < size; i++) {
+		if ((((kmer_t *)(tables_in[tnum]))[in_ind]).k_num == i) {
+			if (!(*flag)) {
+				*flag = 1;
+				set_flag = 1;
+			}
+			if (table_out[*out_ind].kmer == 0) {
+				table_out[*out_ind].kmer = i; 
+			}
+			//atomic_add(&(table_out[*out_ind].k_num), (((kmer_t *)(tables_in[tnum]))[in_ind]).k_num);
+			in_ind++;
+			if (set_flag) {
+				(*out_ind)++;
+				set_flag = 0;
+				*flag = 0;
+			}
+		}
+		barrier(CLK_LOCAL_MEM_FENCE);
+	}*/
+	printf("tnum: %d     ADDRESS: %p\n ", tnum, tables_in[tnum]);
+	//printf("Kmer: %d\n K-num: %d\n ", (((kmer_t *)(tables_in[0]))[in_ind]).kmer, (((kmer_t *)(tables_in[0]))[in_ind]).k_num);
+	if (!tnum) {
+	printf("Kmer: %d\n K-num: %d\n ", (((kmer_t *)(tables_in[0]))[in_ind]).kmer, (((kmer_t *)(tables_in[0]))[in_ind]).k_num);
+	}
+	
+}

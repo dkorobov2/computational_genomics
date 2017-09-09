@@ -1,0 +1,41 @@
+typedef struct kmer_t {
+	uint kmer;
+	uint k_num;
+} kmer_t;
+
+__kernel void reduceFrequency(__global kmer_t *frequency_table, __global kmer_t *frequency_table1, __global kmer_t *table_out, const int size, __global uint *out_ind, __global uint *flag) {
+	int gid = get_global_id(0);
+	int tnum = get_local_id(0);
+	int wgNum = get_group_id(0); 
+	int numItems = get_local_size(0);
+
+	int set_flag = 0;
+	int in_ind = 0;
+
+	__global kmer_t ** tables_in[2];
+	tables_in[0] = frequency_table;
+	tables_in[1] = frequency_table1;
+
+	for (int i = 0; i < size; i++) {
+		if (tables_in[tnum][in_ind]->kmer == i) {
+			//printf("tnum: %d\n kmer: %d\n k_num: %d\n out_ind: %d\n", tnum, tables_in[tnum][in_ind]->kmer, tables_in[tnum][in_ind]->k_num, *out_ind);
+			printf("kmer: %d\n k_num: %d\n", frequency_table[1].kmer, frequency_table[1].k_num);
+			if (!(*flag)) {
+				*flag = 1;
+				set_flag = 1;
+			}
+			if (table_out[*out_ind].kmer == 0) {
+				table_out[*out_ind].kmer = i; printf("AAA tnum: %d\n kmer: %d\n k_num: %d\n out_ind: %d\n in_ind: %d\n", tnum, tables_in[tnum][in_ind]->kmer, tables_in[tnum][in_ind]->k_num, *out_ind, in_ind);
+			}
+			atomic_add(&(table_out[*out_ind].k_num), tables_in[tnum][in_ind]->k_num);
+			in_ind++;
+			if (set_flag) {
+				(*out_ind)++;
+				printf("BBB tnum: %d\n kmer: %d\n k_num: %d\n out_ind: %d\n", tnum, tables_in[tnum][in_ind]->kmer, tables_in[tnum][in_ind]->k_num, *out_ind);
+				set_flag = 0;
+				*flag = 0;
+			}
+		}
+		barrier(CLK_LOCAL_MEM_FENCE);
+	}
+}

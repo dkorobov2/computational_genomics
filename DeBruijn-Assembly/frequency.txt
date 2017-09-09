@@ -1,0 +1,31 @@
+typedef struct kmer_t {
+	uint kmer;
+	uint k_num;
+} kmer_t;
+
+__kernel void countFrequency(__global uint *table_in, __global kmer_t *table_out, const int size, __global intptr_t *tables_in, __global uint *index) {
+	int gid = get_global_id(0);
+	int tnum = get_local_id(0);
+	int wgNum = get_group_id(0); 
+	int numItems = get_local_size(0);
+
+	printf("tnum: %d         table_in: %p      table_out: %p      size: %d         tables_in: %p        index: %d\n", tnum, table_in, table_out, size, tables_in, *index);
+
+	int out_ind = 0;
+	kmer_t temp = {table_in[out_ind], 1};
+	table_out[out_ind] = temp;
+	for (int i = 1; i < size; i++) {
+		if (table_out[out_ind].kmer == table_in[i]) {
+			atomic_add(&(table_out[out_ind].k_num), 1);
+		}
+		else {
+			out_ind++;
+			table_out[out_ind].kmer = table_in[i];
+			table_out[out_ind].k_num = 1;
+		}
+	}
+		tables_in[*index] = (intptr_t) table_out;
+		printf("index: %d\n      tnum: %d\n      table: %p\n", *index, tnum, table_out);
+		(*index)++;
+		printf("now index = %d\n", *index);
+}

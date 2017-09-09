@@ -1,0 +1,9 @@
+__kernel void threshold(__global float * input, __global uchar *output, const float threshold)
+{
+	int tnum = get_local_id(0);
+	int wgNum = get_group_id(0); 
+	int groupItems = get_local_size(0); //512, max on my computer
+	
+	int index = wgNum * groupItems + tnum;
+	output[index] = (threshold - input[index]) < 0;
+}

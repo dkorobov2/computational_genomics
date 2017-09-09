@@ -1,0 +1,62 @@
+Data Size N: 512 * 1024 elements
+
+* N *
+Grain Size: 1 Time 0.00289244 seconds
+Grain Size: 2 Time 0.00259118 seconds
+Grain Size: 4 Time 0.00264793 seconds
+Grain Size: 8 Time 0.00345148 seconds
+Grain Size: 16 Time 0.00482133 seconds
+Grain Size: 32 Time 0.00566413 seconds
+Grain Size: 64 Time 0.00573476 seconds
+Grain Size: 128 Time 0.00950682 seconds
+Grain Size: 256 Time 0.0168807 seconds
+Grain Size: 512 Time 0.0160717 seconds
+Grain Size: 1024 Time 0.0223287 seconds
+
+Best: Grain size = 2
+
+* 2N *
+Data Size: 512 * 2048 elements
+Grain Size: 1 Time 0.00490162 seconds
+Grain Size: 2 Time 0.0043299 seconds
+Grain Size: 4 Time 0.00441804 seconds
+Grain Size: 8 Time 0.00748737 seconds
+Grain Size: 16 Time 0.0114804 seconds
+Grain Size: 32 Time 0.0107988 seconds
+Grain Size: 64 Time 0.0117774 seconds
+Grain Size: 128 Time 0.0215233 seconds
+Grain Size: 256 Time 0.0294538 seconds
+Grain Size: 512 Time 0.0324923 seconds
+Grain Size: 1024 Time 0.0330122 seconds
+
+Best: Grain size = 2
+
+* 8N *
+Grain Size: 1 Time 0.018454 seconds
+Grain Size: 2 Time 0.0191024 seconds
+Grain Size: 4 Time 0.0211061 seconds
+Grain Size: 8 Time 0.0291453 seconds
+Grain Size: 16 Time 0.0360368 seconds
+Grain Size: 32 Time 0.0340101 seconds
+Grain Size: 64 Time 0.0390023 seconds
+Grain Size: 128 Time 0.0531572 seconds
+Grain Size: 256 Time 0.0846431 seconds
+Grain Size: 512 Time 0.107862 seconds
+Grain Size: 1024 Time 0.115254 seconds
+
+Best: Grain size = 1
+
+* 32N *
+Grain Size: 1 Time 0.047298 seconds
+Grain Size: 2 Time 0.0427303 seconds
+Grain Size: 4 Time 0.0515899 seconds
+Grain Size: 8 Time 0.0645084 seconds
+Grain Size: 16 Time 0.0886379 seconds
+Grain Size: 32 Time 0.0979812 seconds
+Grain Size: 64 Time 0.104362 seconds
+Grain Size: 128 Time 0.186349 seconds
+Grain Size: 256 Time 0.315046 seconds
+Grain Size: 512 Time 0.445273 seconds
+Grain Size: 1024 Time 0.473419 seconds
+
+Best: Grain size = 1
